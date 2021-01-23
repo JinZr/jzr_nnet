@@ -1,0 +1,3 @@
+<NnetProto>
+<ParallelComponent> <InputDim> 4000 <OutputDim> 4000 <NestedNnetFilename> nnet_components/final_notop_l5l6.nnet nnet_components/Rescale.nnet </NestedNnetFilename>
+</NnetProto>

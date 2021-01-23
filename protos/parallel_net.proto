@@ -1,0 +1,3 @@
+<NnetProto>
+<ParallelComponent> <InputDim> dim_in <OutputDim> dim_out <NestedNnetFilename> nnet1 nnet2 </NestedNnetFilename>
+</NnetProto>
