@@ -1,0 +1,7 @@
+<NnetProto>
+<AffineTransformRMSProp> <InputDim> 2000 <OutputDim> 100 <ClipWeightUpdate> 0.16 <ClipBiasUpdate> 0.16 <BiasMean> 0.000000 <BiasRange> 1.000000 <ParamStddev> 0.031180 <MaxNorm> 0.000000
+<ReLU> <InputDim> 100 <OutputDim> 100
+<BatchNormalize> <InputDim> 100 <OutputDim> 100 <Epsilon> 1e-3
+<AffineTransformRMSProp> <InputDim> 100 <OutputDim> 2001 <ClipWeightUpdate> 0.16 <ClipBiasUpdate> 0.16 <BiasMean> 0.000000 <BiasRange> 0.000000 <ParamStddev> 0.107987 <LearnRateCoef> 1.000000 <BiasLearnRateCoef> 0.100000
+<Softmax> <InputDim> 2001 <OutputDim> 2001
+</NnetProto>
