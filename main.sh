@@ -2,11 +2,18 @@
 source /opt/share/etc/gcc-5.4.0.sh
 source  /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5/kaldi_path.sh
 
+EXP_PATH=/project_bdda4/bdda/zrjin/DA_AL/SI_SYS/${1}
+PROTOS_PATH=/project_bdda4/bdda/zrjin/PROTOS
+readonly EXP_PATH PROTOS_PATH
+mkdir -p $EXP_PATH
+
+cd $EXP_PATH
+
 # start constructing nnet structure
 mkdir -p nnet_structures
 mkdir -p nnet_components
 
-cp protos/* nnet_components
+cp $PROTOS_PATH/nnet/* nnet_components
 
 C=nnet_components
 S=nnet_structures
@@ -29,7 +36,7 @@ nnet-concat \
     ./l6/final_notop.nnet \
     ${C}/final_notop_l5l6.nnet
 
-cat ./protos/parallel_net.proto \
+cat $PROTOS_PATH/nnet/parallel_net.proto \
 | sed "s/dim_in/4000/g" \
 | sed "s/dim_out/4000/g" \
 | sed "s/nnet1/${C}\/final_notop_l2l3.nnet/g" \
@@ -39,7 +46,7 @@ cat ./protos/parallel_net.proto \
 nnet-initialize $C/parallel_net.proto - | \
  nnet-concat $C/copy2_2000.nnet - $C/sum2_2000.nnet $C/final_notop_l2l3_skip.nnet
 
-cat ./protos/parallel_net.proto \
+cat $PROTOS_PATH/nnet/parallel_net.proto \
 | sed "s/dim_in/4000/g" \
 | sed "s/dim_out/4000/g" \
 | sed "s/nnet1/${C}\/final_notop_l5l6.nnet/g" \
