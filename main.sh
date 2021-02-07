@@ -3,10 +3,17 @@ source /opt/share/etc/gcc-5.4.0.sh
 source  /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5/kaldi_path.sh
 
 EXP_PATH=/project_bdda4/bdda/zrjin/DA_AL/SI_SYS/${1}
+LOG_PATH=$EXP_PATH/log
+
 PROTOS_PATH=/project_bdda4/bdda/zrjin/PROTOS
 SCRIPTS_PATH=/project_bdda4/bdda/zrjin/jzr_nnet
-readonly EXP_PATH PROTOS_PATH
+readonly EXP_PATH PROTOS_PATH SCRIPTS_PATH
+source $SCRIPTS_PATH/path.sh
+source $SCRIPTS_PATH/conf.sh
+
 mkdir -p $EXP_PATH
+mkdir -p $LOG_PATH
+
 
 cd $EXP_PATH
 
@@ -96,13 +103,54 @@ nnet-concat \
     $C/DNN7_MTL.nnet \
     $S/nnet.init
 
-train_scp=input/train.spkctrl.ctrl.dys.tempo.sort.scp
-cv_scp=input/cv_testcv_fbk_sort_kaldi.scp
-train_label=input/train.spkctrl.ctrl.dys.tempo.sort.post
-cv_label=input/traincv.dys.no.compress.sort.post
-dbn_dir=dnn_fbk_wd_batchnorm_new_rmsprop/all_dropout_res_MTL_mono0505_fix8decay7_spkctrl_ctrl_dys_tempo_bdda3
-mlp_dir=dnn_fbk_wd_batchnorm_new_rmsprop/all_dropout_res_MTL_mono0505_fix8decay7_spkctrl_ctrl_dys_tempo_bdda3
-label_num=2001
+train_scp=$SCP_PATH/train.scp
+cv_scp=$SCP_PATH/cv.scp
+train_label=$LABEL_PATH/train.post
+cv_label=$LABEL_PATH/cv.post
+dbn_dir=$DBN_PATH
+mlp_dir=$MLP_PATH
+label_num=$LABEL_NUM
+
+bash mlp_train_label.sh \
+    --mlp_init $mlp_dir/nnet.init \
+    --learn-rate 0.002 \
+    --copy-feats false \
+    --objective-function 'multitask,xent,41,0.5,xent,2001,0.5' \
+    --train-opts '--max-iters 0 --max-iters-fix 8 --max-iters-dec 7 --decay-factor 0.5 --momentum 0.5 --l2_penalty 0.0000025 --pre_eval true' \
+    --feature-transform context9_80.transf \
+    $mlp_dir \
+    $train_scp \
+    $cv_scp \
+    $train_label \
+    $cv_label \
+    $label_num \
+    >& $LOG_PATH/dnn_all.log
+
+# ???
+mv \
+    $mlp_dir/final.nnet \
+    $mlp_dir/final_MTL.nnet
+nnet-copy \
+    --remove-last-components=2 \
+    --binary=false \
+    $mlp_dir/final_MTL.nnet \
+    $mlp_dir/final_notop.nnet
+nnet-copy \
+    --remove-first-components=19 \
+    --binary=false \
+    $mlp_dir/final_MTL.nnet \
+    $mlp_dir/final_top_MTL.nnet
+perl \
+    $SCRIPTS_PATH/scripts/MTL_keep_the_N.pl \
+    $mlp_dir/final_top_MTL.nnet \
+    2 \
+    > $mlp_dir/final_top.nnet
+nnet-concat \
+    --binary=false \
+    $mlp_dir/final_notop.nnet \
+    $mlp_dir/final_top.nnet \
+    $mlp_dir/final.nnet
+
 
 
 
