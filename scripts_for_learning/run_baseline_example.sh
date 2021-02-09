@@ -72,25 +72,25 @@ nnet-concat --binary=false $mlp_dir/final_notop.nnet $mlp_dir/final_top.nnet $ml
 
 # added by Tim
 
-train_scp=train_testcv_fbk_sort_kaldi.scp
-cv_scp=cv_testcv_fbk_sort_kaldi.scp
-train_label=traincv_state_mono_nosp.post
-cv_label=traincv_state_mono_nosp.post
-dbn_dir=dnn_fbk_wd_batchnorm_new_rmsprop/all_dropout_res_MTL_mono0505_fix8decay7_bdda4
-mlp_dir=dnn_fbk_wd_batchnorm_new_rmsprop/all_dropout_res_MTL_mono0505_fix8decay7_bdda4
-label_num=2001
+# train_scp=train_testcv_fbk_sort_kaldi.scp
+# cv_scp=cv_testcv_fbk_sort_kaldi.scp
+# train_label=traincv_state_mono_nosp.post
+# cv_label=traincv_state_mono_nosp.post
+# dbn_dir=dnn_fbk_wd_batchnorm_new_rmsprop/all_dropout_res_MTL_mono0505_fix8decay7_bdda4
+# mlp_dir=dnn_fbk_wd_batchnorm_new_rmsprop/all_dropout_res_MTL_mono0505_fix8decay7_bdda4
+# label_num=2001
 
 
-mv $mlp_dir/final.nnet $mlp_dir/final_MTL.nnet
-nnet-copy --remove-last-components=2 --binary=false $mlp_dir/final_MTL.nnet $mlp_dir/final_notop.nnet
-nnet-copy --remove-first-components=19 --binary=false $mlp_dir/final_MTL.nnet $mlp_dir/final_top_MTL.nnet
-perl scripts/MTL_keep_the_N.pl $mlp_dir/final_top_MTL.nnet 2 > $mlp_dir/final_top.nnet
-nnet-concat --binary=false $mlp_dir/final_notop.nnet $mlp_dir/final_top.nnet $mlp_dir/final.nnet
+# mv $mlp_dir/final.nnet $mlp_dir/final_MTL.nnet
+# nnet-copy --remove-last-components=2 --binary=false $mlp_dir/final_MTL.nnet $mlp_dir/final_notop.nnet
+# nnet-copy --remove-first-components=19 --binary=false $mlp_dir/final_MTL.nnet $mlp_dir/final_top_MTL.nnet
+# perl scripts/MTL_keep_the_N.pl $mlp_dir/final_top_MTL.nnet 2 > $mlp_dir/final_top.nnet
+# nnet-concat --binary=false $mlp_dir/final_notop.nnet $mlp_dir/final_top.nnet $mlp_dir/final.nnet
 
-cd /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5_DataAugmentation_correct_cv
+# cd /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5_DataAugmentation_correct_cv
 
 bash decode.sh \
- --scp-file /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5/test_testcv_fbk_problem_kaldi.scp \
- --decode-dir /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5/hybrid255_dnn_fbk_wd_batchnorm_new_rmsprop_all_dropout_res_MTL_mono0505_fix8decay7_bdda4 \
- --DNN-dir /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5/dnn_fbk_wd_batchnorm_new_rmsprop/all_dropout_res_MTL_mono0505_fix8decay7_bdda4 \
---prior_counts /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5/ali_train_pdf.counts
+    --scp-file /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5/test_testcv_fbk_problem_kaldi.scp \
+    --decode-dir /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5/hybrid255_dnn_fbk_wd_batchnorm_new_rmsprop_all_dropout_res_MTL_mono0505_fix8decay7_bdda4 \
+    --DNN-dir /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5/dnn_fbk_wd_batchnorm_new_rmsprop/all_dropout_res_MTL_mono0505_fix8decay7_bdda4 \
+    --prior_counts /project_bdda3/bdda/mengzhe/DataAugmentation/kaldi-trunk-new/egs/uaspeech/s5/ali_train_pdf.counts
